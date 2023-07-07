@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JavaScript Duino Miner</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div class="code-effect">
+        <h1>Duino Miner</h1>
+        <label for="username">Username:</label>
+        <input type="text" id="username" value="Ashlad">
+        <br>
+        <label for="key">Key:</label>
+        <input type="text" id="key" value="None">
+        <br>
+        <div id="startStopButtons">
+            <button id="startButton" onclick="mine()">Start Mining</button>
+            <button id="stopButton" onclick="stopMine()" style="display: none">Stop Mining</button>
+        </div>
+        <br>
+        <label for="currenthash">Current Hash:</label>
+        <span id="currenthash"></span>
+        <br>
+        <label for="expectedhash">Expected Hash:</label>
+        <span id="expectedhash"></span>
+        <br>
+        <label for="difficulty">Difficulty:</label>
+        <span id="difficulty"></span>
+        <br>
+        <label for="status">Current status:</label>
+        <span id="status"></span>
+        <br>
+        <br>
+        <b>- Last job info -</b>
+        <br>
+        <label for="feedback">Feedback:</label>
+        <span id="feedback"></span>
+        <br>
+        <label for="validated">Final Status:</label>
+        <span id="validated"></span>
+    </div>
+
+    <script>
+        let worker = new Worker('miner-worker.js');
+        let currentuseragent = navigator.userAgent;
+        const username_ = document.getElementById("username");
+        const key_ = document.getElementById("key");
+        const currenthash = document.getElementById("currenthash");
+        const currentstatus = document.getElementById("status");
+        const expectedhash = document.getElementById("expectedhash");
+        const difficulty = document.getElementById("difficulty");
+        const validated = document.getElementById("validated");
+        const feedback = document.getElementById("feedback");
+
+        let miningStarted = false;
+
+        function mine() {
+            console.log(username_.value);
+            console.log(key_.value);
+            worker.postMessage({ username: username_.value, key: key_.value, userAgent: currentuseragent, action: "mine" });
+            startButton.style.display = "none";
+            stopButton.style.display = "inline-block";
+            miningStarted = true;
+        }
+        function stopMine() {
+            worker.postMessage({ username: username_.value, key: key_.value, userAgent: currentuseragent, action: "stop" });
+            startButton.style.display = "inline-block";
+            stopButton.style.display = "none";
+            currentstatus.innerHTML = "Stopped - (refresh to mine again)";
+            miningStarted = false;
+            worker.terminate();
+        }
+
+        worker.onmessage = function (message) {
+            let data = message.data.data
+            if (message.data.type == "progress") {
+                currenthash.innerHTML = data.lastHash;
+                currentstatus.innerHTML = data.status;
+                expectedhash.innerHTML = data.expected;
+                difficulty.innerHTML = data.diff
+            } else if (message.data.type == "result") {
+                validated.innerHTML = data.validated;
+                feedback.innerHTML = data.resp;
+                if (!miningStarted) {
+                    startButton.style.display = "inline-block";
+                    stopButton.style.display = "none";
+                }
+            } else if (message.data.type == "done") {
+                worker.postMessage({ username: username_.value, key: key_.value, action: "mine" });
+            } else if (message.data.type == "error") {
+                feedback.innerHTML = data.message;
+            }
+        }
+    </script>
+</body>
+
+</html>

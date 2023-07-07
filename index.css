@@ -1,0 +1,31 @@
+body,
+input,
+button {
+  background-color: black;
+  font-family: "Courier New", monospace;
+}
+
+.code-effect {
+  color: #00ff00;
+}
+
+button {
+  cursor: pointer;
+}
+
+h1,
+label,
+input,
+button,
+span {
+  color: #00ff00;
+  opacity: 1;
+}
+
+#startButton {
+  background-color: #4caf50; 
+}
+
+#stopButton {
+  background-color: #f44336; 
+}
