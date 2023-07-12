@@ -1,3 +1,5 @@
+*Currently not working due to DuinoCoin devs turning off the endpoints for requesting and validating jobs*
+
 #  JavaScript Duino Coin Miner 
 
 This project provides a simple and efficient way to mine DuinoCoin cryptocurrency using JavaScript, HTML, and Web Workers for better user experience. This miner doesn't use wensocket connection and instead request and validates jobs by performing request to the network.
