@@ -1,4 +1,4 @@
-*Currently not working due to DuinoCoin devs turning off the endpoints for requesting and validating jobs*
+*Currently not working*
 
 #  JavaScript Duino Coin Miner 
 
